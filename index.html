@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#1a56db">
+<title>MineralIntel — Uganda Mining Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#f8f9fc;--bg2:#ffffff;--bg3:#f1f3f9;--bg4:#e8ecf4;
+  --b1:#e2e8f0;--b2:#cbd5e1;--b3:#94a3b8;
+  --t1:#0f172a;--t2:#475569;--t3:#94a3b8;--t4:#cbd5e1;
+  --blue:#1d4ed8;--blue2:#2563eb;--blue3:#dbeafe;--blue4:#eff6ff;
+  --teal:#0d9488;--teal2:#ccfbf1;
+  --red:#dc2626;--red2:#fee2e2;
+  --green:#16a34a;--grn2:#dcfce7;
+  --amber:#d97706;--amb2:#fef3c7;
+  --purple:#7c3aed;--pur2:#ede9fe;
+  --gold:#b45309;--gld2:#fef3c7;
+  --r:6px;--r2:10px;--r3:14px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
+  --shadow2:0 4px 6px -1px rgba(0,0,0,.08),0 2px 4px -1px rgba(0,0,0,.05);
+}
+html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;overflow:hidden;-webkit-font-smoothing:antialiased}
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+.sb{width:220px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--b1);display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.sb-logo{padding:16px 14px 13px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:9px}
+.sb-icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#1d4ed8,#0d9488);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-icon svg{width:18px;height:18px;fill:white}
+.sb-name{font-size:14px;font-weight:700;color:var(--t1);letter-spacing:-.01em}
+.sb-tag{font-size:10px;color:var(--t3);font-weight:400}
+.sb-nav{flex:1;padding:10px 8px;overflow-y:auto;display:flex;flex-direction:column;gap:1px}
+.sb-nav::-webkit-scrollbar{display:none}
+.sg{margin-bottom:6px}
+.sg-lbl{font-size:10px;font-weight:600;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;padding:6px 8px 3px}
+.ni{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:var(--r);cursor:pointer;color:var(--t2);font-size:12px;font-weight:500;transition:all .1s;position:relative;user-select:none}
+.ni:hover{background:var(--bg3);color:var(--t1)}
+.ni.on{background:var(--blue4);color:var(--blue2);font-weight:600}
+.ni svg{width:15px;height:15px;flex-shrink:0;opacity:.6}
+.ni.on svg{opacity:1;color:var(--blue2)}
+.ni-cnt{margin-left:auto;font-size:9px;padding:1px 6px;border-radius:10px;font-weight:600}
+.nc-r{background:var(--red2);color:var(--red)}
+.nc-b{background:var(--blue3);color:var(--blue2)}
+.sb-foot{padding:12px 14px;border-top:1px solid var(--b1)}
+.user{display:flex;align-items:center;gap:9px}
+.av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--blue2),var(--teal));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.un{font-size:12px;font-weight:600;color:var(--t1)}
+.ur{font-size:10px;color:var(--t3)}
+.live{display:flex;align-items:center;gap:4px;margin-left:auto;font-size:9px;font-weight:600;color:var(--teal)}
+.ld{width:5px;height:5px;border-radius:50%;background:var(--teal);animation:pu 2s infinite}
+@keyframes pu{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* TOPBAR */
+.mn{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.tb{height:52px;flex-shrink:0;background:var(--bg2);border-bottom:1px solid var(--b1);display:flex;align-items:center;padding:0 20px;gap:12px;box-shadow:var(--shadow)}
+.tb-title{font-size:14px;font-weight:700;color:var(--t1);flex:1}
+.tb-sub{font-size:11px;color:var(--t3);flex:1;margin-top:1px}
+.srch{background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r);padding:6px 11px;display:flex;align-items:center;gap:7px;width:220px;flex-shrink:0;transition:border-color .1s}
+.srch:focus-within{border-color:var(--blue2);background:var(--bg2)}
+.srch input{background:none;border:none;outline:none;color:var(--t1);font-size:12px;font-family:'Inter',sans-serif;width:100%}
+.srch input::placeholder{color:var(--t3)}
+.tb-icon{width:32px;height:32px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t2);transition:background .1s;flex-shrink:0;position:relative}
+.tb-icon:hover{background:var(--bg3)}
+.tb-icon svg{width:16px;height:16px}
+.notif-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--red);border:2px solid var(--bg2)}
+.btn{padding:6px 14px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;border:none;transition:all .1s;white-space:nowrap}
+.btn-blue{background:var(--blue2);color:#fff}
+.btn-blue:hover{background:var(--blue)}
+.btn-outline{background:var(--bg2);border:1px solid var(--b2);color:var(--t2)}
+.btn-outline:hover{background:var(--bg3);color:var(--t1)}
+.btn-sm{padding:4px 10px;font-size:11px}
+.btn-danger{background:var(--red2);color:var(--red);border:1px solid #fca5a5}
+
+/* CONTENT */
+.ct{flex:1;overflow-y:auto;padding:20px;background:var(--bg)}
+.ct::-webkit-scrollbar{width:4px}
+.ct::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+
+/* PAGES */
+.pg{display:none}
+.pg.on{display:block;animation:fu .18s ease}
+@keyframes fu{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r2);padding:16px;box-shadow:var(--shadow)}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-title{font-size:13px;font-weight:600;color:var(--t1)}
+.card-sub{font-size:11px;color:var(--t3);margin-top:1px}
+.card-action{font-size:11px;color:var(--blue2);cursor:pointer;font-weight:500}
+.card-action:hover{text-decoration:underline}
+.mb{margin-bottom:14px}
+.divider{height:1px;background:var(--b1);margin:12px 0}
+
+/* LAYOUT */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}
+.g2l{display:grid;grid-template-columns:1.5fr 1fr;gap:14px;margin-bottom:14px}
+.g2r{display:grid;grid-template-columns:1fr 1.5fr;gap:14px;margin-bottom:14px}
+
+/* STAT CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.stat{background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r2);padding:16px 18px;box-shadow:var(--shadow)}
+.stat-label{font-size:11px;font-weight:600;color:var(--t3);letter-spacing:.02em;margin-bottom:8px;text-transform:uppercase}
+.stat-val{font-size:24px;font-weight:700;color:var(--t1);line-height:1;margin-bottom:5px;letter-spacing:-.02em}
+.stat-change{font-size:11px;font-weight:500;display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:10px}
+.sc-up{background:var(--grn2);color:var(--green)}
+.sc-dn{background:var(--red2);color:var(--red)}
+.sc-nt{background:var(--bg3);color:var(--t3)}
+.stat-icon{float:right;margin-top:-2px}
+.stat-icon div{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.stat-icon svg{width:18px;height:18px}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;white-space:nowrap;gap:4px}
+.b-blue{background:var(--blue3);color:var(--blue2)}
+.b-green{background:var(--grn2);color:var(--green)}
+.b-red{background:var(--red2);color:var(--red)}
+.b-amber{background:var(--amb2);color:var(--amber)}
+.b-purple{background:var(--pur2);color:var(--purple)}
+.b-teal{background:var(--teal2);color:var(--teal)}
+.b-gold{background:var(--gld2);color:var(--gold)}
+.b-gray{background:var(--bg3);color:var(--t2)}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto;border-radius:var(--r2);border:1px solid var(--b1);background:var(--bg2)}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:10px;font-weight:600;color:var(--t3);letter-spacing:.04em;text-transform:uppercase;padding:10px 14px;border-bottom:1px solid var(--b1);text-align:left;background:var(--bg3);white-space:nowrap}
+.tbl td{padding:10px 14px;border-bottom:1px solid var(--b1);font-size:12px;color:var(--t2);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--bg3)}
+.tbl .nm{font-size:12px;font-weight:600;color:var(--t1);cursor:pointer}
+.tbl .nm:hover{color:var(--blue2)}
+.tbl-footer{padding:10px 14px;font-size:11px;color:var(--t3);background:var(--bg3);border-top:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between}
+
+/* LIST ITEMS */
+.li-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--b1)}
+.li-row:last-child{border-bottom:none;padding-bottom:0}
+.li-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px}
+.li-body{flex:1;min-width:0}
+.li-title{font-size:12px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.li-sub{font-size:11px;color:var(--t3)}
+
+/* FEED */
+.feed-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--b1)}
+.feed-item:last-child{border-bottom:none}
+.feed-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.feed-title{font-size:12px;color:var(--t1);margin-bottom:2px;line-height:1.4;font-weight:500}
+.feed-meta{font-size:10px;color:var(--t3)}
+
+/* MINI STATS */
+.ms{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--b1)}
+.ms:last-child{border-bottom:none}
+.ms-l{font-size:11px;color:var(--t2)}
+.ms-v{font-size:12px;font-weight:600;color:var(--t1)}
+
+/* BAR ROWS */
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bar-lbl{font-size:11px;color:var(--t2);width:130px;flex-shrink:0}
+.bar-track{flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width .4s}
+.bar-val{font-size:11px;font-weight:600;color:var(--t1);width:40px;text-align:right}
+
+/* ALERT BANNER */
+.alert-banner{background:var(--red2);border:1px solid #fca5a5;border-radius:var(--r2);padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.alert-banner-txt{font-size:12px;color:var(--red);flex:1;font-weight:500;line-height:1.5}
+.info-banner{background:var(--blue4);border:1px solid #bfdbfe;border-radius:var(--r2);padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.info-banner-txt{font-size:12px;color:var(--blue2);flex:1;font-weight:500}
+
+/* CHART CONTAINERS */
+.chart-wrap{position:relative;height:220px;width:100%}
+.chart-wrap-sm{position:relative;height:160px;width:100%}
+.chart-wrap-lg{position:relative;height:300px;width:100%}
+
+/* MAP */
+.map-container{background:linear-gradient(160deg,#e0f2fe,#f0fdf4);border:1px solid var(--b1);border-radius:var(--r2);height:320px;position:relative;overflow:hidden}
+.map-overlay-text{position:absolute;bottom:10px;right:10px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
+.map-legend{position:absolute;top:12px;right:12px;background:white;border:1px solid var(--b1);border-radius:var(--r);padding:8px 10px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:4px}
+.ml-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--t2)}
+.ml-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* EXPIRY */
+.ex-c{color:var(--red);font-weight:600}
+.ex-w{color:var(--amber);font-weight:600}
+.ex-o{color:var(--green);font-weight:500}
+
+/* SCENARIO SLIDERS */
+.scen-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.scen-lbl{font-size:12px;color:var(--t2);width:160px;flex-shrink:0;font-weight:500}
+.scen-sl{flex:1;-webkit-appearance:none;appearance:none;height:4px;border-radius:2px;background:var(--bg3);outline:none;cursor:pointer}
+.scen-sl::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--blue2);cursor:pointer;border:2px solid white;box-shadow:var(--shadow)}
+.scen-val{width:70px;text-align:right;font-size:12px;font-weight:600;color:var(--blue2);flex-shrink:0}
+.result-box{background:var(--blue4);border:1px solid #bfdbfe;border-radius:var(--r2);padding:16px}
+.result-big{font-size:30px;font-weight:700;color:var(--blue);letter-spacing:-.02em}
+.result-delta{font-size:12px;font-weight:500;margin-top:4px}
+
+/* RISK CELLS */
+.risk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.rc{padding:14px;border-radius:var(--r2);border:1px solid var(--b1);cursor:pointer;transition:box-shadow .1s}
+.rc:hover{box-shadow:var(--shadow2)}
+.rc-lbl{font-size:11px;color:var(--t2);margin-bottom:4px;font-weight:500}
+.rc-val{font-size:22px;font-weight:700}
+.rc-bar{height:3px;border-radius:2px;margin-top:8px}
+.rh{background:#fef2f2;border-color:#fecaca}.rh .rc-val{color:var(--red)}.rh .rc-bar{background:var(--red)}
+.rm{background:#fffbeb;border-color:#fde68a}.rm .rc-val{color:var(--amber)}.rm .rc-bar{background:var(--amber)}
+.rl{background:#f0fdf4;border-color:#bbf7d0}.rl .rc-val{color:var(--green)}.rl .rc-bar{background:var(--green)}
+
+/* COMMODITY CARDS */
+.comm-card{background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r2);padding:14px;box-shadow:var(--shadow);transition:box-shadow .1s}
+.comm-card:hover{box-shadow:var(--shadow2)}
+.comm-name{font-size:12px;font-weight:600;color:var(--t2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.comm-price{font-size:20px;font-weight:700;color:var(--t1);margin-bottom:3px;letter-spacing:-.01em}
+.comm-unit{font-size:10px;color:var(--t3);margin-bottom:6px}
+.comm-change{font-size:11px;font-weight:600}
+.comm-chart-mini{height:40px;margin-top:8px}
+
+/* REPORT CARDS */
+.rep{background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r2);padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:box-shadow .1s}
+.rep:hover{box-shadow:var(--shadow2)}
+.rep-icon{font-size:24px;line-height:1}
+.rep-title{font-size:13px;font-weight:700;color:var(--t1)}
+.rep-desc{font-size:11px;color:var(--t3);line-height:1.6;flex:1}
+.rep-footer{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+
+/* NEWS */
+.news-card{background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r2);padding:14px;box-shadow:var(--shadow);margin-bottom:10px;cursor:pointer;transition:box-shadow .1s}
+.news-card:hover{box-shadow:var(--shadow2)}
+.news-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;margin-bottom:7px;display:inline-block}
+.news-title{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:4px;line-height:1.4}
+.news-meta{font-size:10px;color:var(--t3)}
+
+/* TABS */
+.tabs{display:flex;gap:2px;background:var(--bg3);border-radius:var(--r);padding:3px;margin-bottom:16px;width:fit-content}
+.tab{padding:5px 14px;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer;color:var(--t3);transition:all .1s}
+.tab.on{background:var(--bg2);color:var(--t1);box-shadow:var(--shadow)}
+
+/* SEARCH HIGHLIGHT */
+.highlight{background:#fef9c3}
+
+/* MOBILE */
+@media(max-width:900px){
+  .sb{width:56px}
+  .sb-name,.sb-tag,.sg-lbl,.ni span,.ni-cnt,.un,.ur,.live{display:none}
+  .ni{justify-content:center;padding:9px}
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .g2,.g3,.g4,.g2l,.g2r{grid-template-columns:1fr}
+}
+@media(max-width:540px){
+  .stat-grid{grid-template-columns:1fr}
+  .srch{width:130px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ════ SIDEBAR ════ -->
+<nav class="sb">
+  <div class="sb-logo">
+    <div class="sb-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    </div>
+    <div><div class="sb-name">MineralIntel</div><div class="sb-tag">Uganda Platform</div></div>
+  </div>
+
+  <div class="sb-nav">
+    <div class="sg">
+      <div class="sg-lbl">Overview</div>
+      <div class="ni on" onclick="nav('dashboard')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        <span>Dashboard</span><span class="ni-cnt nc-r">5</span>
+      </div>
+      <div class="ni" onclick="nav('projects')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Projects</span>
+      </div>
+      <div class="ni" onclick="nav('evaluator')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span>Evaluator</span>
+      </div>
+    </div>
+    <div class="sg">
+      <div class="sg-lbl">Intelligence</div>
+      <div class="ni" onclick="nav('map')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+        <span>Map Intelligence</span>
+      </div>
+      <div class="ni" onclick="nav('commodities')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        <span>Commodities</span>
+      </div>
+      <div class="ni" onclick="nav('countries')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+        <span>Countries</span>
+      </div>
+    </div>
+    <div class="sg">
+      <div class="sg-lbl">Cadastre</div>
+      <div class="ni" onclick="nav('licences')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <span>Licences</span><span class="ni-cnt nc-b">847</span>
+      </div>
+      <div class="ni" onclick="nav('uganda')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span>Uganda Module</span>
+      </div>
+    </div>
+    <div class="sg">
+      <div class="sg-lbl">Tools</div>
+      <div class="ni" onclick="nav('alerts')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span>Alerts</span><span class="ni-cnt nc-r">8</span>
+      </div>
+      <div class="ni" onclick="nav('news')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8V6z"/></svg>
+        <span>News</span>
+      </div>
+      <div class="ni" onclick="nav('scenarios')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Scenarios</span>
+      </div>
+      <div class="ni" onclick="nav('reports')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+        <span>Reports</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sb-foot">
+    <div class="user">
+      <div class="av">EX</div>
+      <div><div class="un">Executive</div><div class="ur">UNMC · Admin</div></div>
+      <div class="live"><div class="ld"></div>Live</div>
+    </div>
+  </div>
+</nav>
+
+<!-- ════ MAIN ════ -->
+<div class="mn">
+  <!-- TOPBAR -->
+  <div class="tb">
+    <div>
+      <div class="tb-title" id="pg-title">Dashboard</div>
+      <div class="tb-sub" id="pg-sub">Uganda National Mining Intelligence Platform</div>
+    </div>
+    <div class="srch">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input placeholder="Search projects, licences, companies…" id="gsearch" oninput="onSearch(this.value)"/>
+    </div>
+    <div class="tb-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <div class="notif-dot"></div>
+    </div>
+    <div class="tb-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 114.93 19.07M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </div>
+    <div class="av" style="cursor:pointer">EX</div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="ct" id="ct-area">
+
+    <!-- ══ DASHBOARD ══ -->
+    <div class="pg on" id="pg-dashboard">
+      <div class="alert-banner">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--red)"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div class="alert-banner-txt"><strong>2 critical alerts:</strong> EL/0042 (Makuutu REE) expired 8 days ago — $1.24B NPV at risk · PL/0118–0122 expire in 8 days, no renewals filed</div>
+        <button class="btn btn-danger btn-sm" onclick="nav('alerts')">View Alerts</button>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div class="stat-label">Portfolio NPV</div>
+            <div style="width:34px;height:34px;border-radius:8px;background:#dbeafe;display:flex;align-items:center;justify-content:center">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+            </div>
+          </div>
+          <div class="stat-val">$4.7B</div>
+          <span class="stat-change sc-up">↑ 3.2% this quarter</span>
+        </div>
+        <div class="stat">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div class="stat-label">Govt Revenue (10yr)</div>
+            <div style="width:34px;height:34px;border-radius:8px;background:#ccfbf1;display:flex;align-items:center;justify-content:center">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            </div>
+          </div>
+          <div class="stat-val">$1.2B</div>
+          <span class="stat-change sc-up">↑ 8.1% forecast</span>
+        </div>
+        <div class="stat">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div class="stat-label">Licences Expiring</div>
+            <div style="width:34px;height:34px;border-radius:8px;background:#fee2e2;display:flex;align-items:center;justify-content:center">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+          </div>
+          <div class="stat-val">23</div>
+          <span class="stat-change sc-dn">↑ 4 critical · ≤90 days</span>
+        </div>
+        <div class="stat">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div class="stat-label">Total Licences</div>
+            <div style="width:34px;height:34px;border-radius:8px;background:#ede9fe;display:flex;align-items:center;justify-content:center">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+          </div>
+          <div class="stat-val">847</div>
+          <span class="stat-change sc-up">↑ 12 this month</span>
+        </div>
+      </div>
+
+      <div class="g2l">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card">
+            <div class="card-hdr">
+              <div><div class="card-title">Capital Needs by Stage</div><div class="card-sub">Funding requirements across pipeline ($B)</div></div>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="capitalChart"></canvas>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hdr">
+              <div><div class="card-title">Decision Queue</div><div class="card-sub">Items requiring immediate action</div></div>
+              <div class="card-action" onclick="nav('alerts')">View all →</div>
+            </div>
+            <div class="li-row">
+              <div class="li-icon" style="background:#fee2e2">🚨</div>
+              <div class="li-body"><div class="li-title">EL/0042 expired — Makuutu REE · Ministry action required</div><div class="li-sub">Rwenzori Minerals · Eastern · $1.24B NPV · 8 days overdue</div></div>
+              <span class="badge b-red">Critical</span>
+            </div>
+            <div class="li-row">
+              <div class="li-icon" style="background:#fef3c7">⚠️</div>
+              <div class="li-body"><div class="li-title">3 Karamoja PLs expire Apr 28 — no renewals lodged</div><div class="li-sub">Karamoja Gold Corp · Northern · 28,400ha</div></div>
+              <span class="badge b-amber">Urgent</span>
+            </div>
+            <div class="li-row">
+              <div class="li-icon" style="background:#dbeafe">💰</div>
+              <div class="li-body"><div class="li-title">IFC term sheet — Tororo Limestone $120M facility</div><div class="li-sub">14-day response window · Eastern · LML/0007</div></div>
+              <span class="badge b-blue">New</span>
+            </div>
+            <div class="li-row">
+              <div class="li-icon" style="background:#dcfce7">✅</div>
+              <div class="li-body"><div class="li-title">Kilembe Copper feasibility approved — proceed to FEED</div><div class="li-sub">Western · $890M NPV · Q3 2026 start target</div></div>
+              <span class="badge b-green">Action</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card">
+            <div class="card-hdr">
+              <div><div class="card-title">Revenue by Commodity</div><div class="card-sub">10-year government revenue projection</div></div>
+            </div>
+            <div class="chart-wrap-sm">
+              <canvas id="revenueChart"></canvas>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hdr">
+              <div><div class="card-title">Intelligence Feed</div></div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:10px;font-weight:600;color:var(--teal)"><div class="ld"></div>Live</div>
+            </div>
+            <div class="feed-item"><div class="feed-dot" style="background:var(--red)"></div><div><div class="feed-title">EL/0042 expired — cadastre confirmed, no renewal filed</div><div class="feed-meta">Cadastre · 2h ago · Makuutu REE</div></div></div>
+            <div class="feed-item"><div class="feed-dot" style="background:var(--green)"></div><div><div class="feed-title">REE benchmark +18% YTD on EV demand surge</div><div class="feed-meta">Commodity data · 6h ago</div></div></div>
+            <div class="feed-item"><div class="feed-dot" style="background:var(--amber)"></div><div><div class="feed-title">PL/0118–0122 — 8 days to expiry, no holder response</div><div class="feed-meta">Expiry monitor · Yesterday · Moroto</div></div></div>
+            <div class="feed-item"><div class="feed-dot" style="background:var(--blue2)"></div><div><div class="feed-title">New application: NorthGold Ltd — 14,200ha copper, Kitgum</div><div class="feed-meta">Cadastre Layer 1 · 2 days ago</div></div></div>
+            <div class="feed-item"><div class="feed-dot" style="background:var(--teal)"></div><div><div class="feed-title">Open ground: Arua 32,000ha REE block — no competing apps</div><div class="feed-meta">Spatial analysis · 3 days ago</div></div></div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Portfolio by Type</div></div>
+            <div class="bar-row"><div class="bar-lbl">Prospecting (PL)</div><div class="bar-track"><div class="bar-fill" style="width:68%;background:#2563eb"></div></div><div class="bar-val">289</div></div>
+            <div class="bar-row"><div class="bar-lbl">Exploration (EL)</div><div class="bar-track"><div class="bar-fill" style="width:44%;background:#0d9488"></div></div><div class="bar-val">187</div></div>
+            <div class="bar-row"><div class="bar-lbl">Mining Leases</div><div class="bar-track"><div class="bar-fill" style="width:15%;background:#16a34a"></div></div><div class="bar-val">43</div></div>
+            <div class="bar-row"><div class="bar-lbl">Artisanal (AML)</div><div class="bar-track"><div class="bar-fill" style="width:10%;background:#7c3aed"></div></div><div class="bar-val">42</div></div>
+            <div class="bar-row"><div class="bar-lbl">Applications</div><div class="bar-track"><div class="bar-fill" style="width:14%;background:#d97706"></div></div><div class="bar-val">58</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PROJECTS ══ -->
+    <div class="pg" id="pg-projects">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+        <select id="pf-c" style="background:var(--bg2);border:1px solid var(--b1);color:var(--t1);padding:7px 11px;border-radius:var(--r);font-size:12px;outline:none;font-family:'Inter',sans-serif" onchange="filterProj()"><option value="">All Commodities</option><option>Gold</option><option>REE</option><option>Copper</option><option>Limestone</option><option>Graphite</option><option>Phosphate</option></select>
+        <select id="pf-r" style="background:var(--bg2);border:1px solid var(--b1);color:var(--t1);padding:7px 11px;border-radius:var(--r);font-size:12px;outline:none;font-family:'Inter',sans-serif" onchange="filterProj()"><option value="">All Regions</option><option>Eastern</option><option>Western</option><option>Northern</option><option>Central</option></select>
+        <select id="pf-s" style="background:var(--bg2);border:1px solid var(--b1);color:var(--t1);padding:7px 11px;border-radius:var(--r);font-size:12px;outline:none;font-family:'Inter',sans-serif" onchange="filterProj()"><option value="">All Stages</option><option>Production</option><option>Development</option><option>Exploration</option></select>
+        <span style="font-size:12px;color:var(--t3);margin-left:auto" id="proj-count">7 projects</span>
+        <button class="btn btn-blue btn-sm">+ Add Project</button>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Project Name</th><th>Commodity</th><th>Stage</th><th>Region</th><th>NPV ($M)</th><th>IRR</th><th>CAPEX ($M)</th><th>CAPEX Stage</th><th>Risk Level</th><th>Status</th></tr></thead>
+          <tbody id="proj-tbody"></tbody>
+        </table>
+        <div class="tbl-footer"><span id="proj-footer">Showing 7 of 7 projects</span><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm">← Prev</button><button class="btn btn-outline btn-sm">Next →</button></div></div>
+      </div>
+    </div>
+
+    <!-- ══ EVALUATOR ══ -->
+    <div class="pg" id="pg-evaluator">
+      <div class="g2">
+        <div class="card">
+          <div class="card-hdr"><div><div class="card-title">Project Evaluator — Makuutu REE</div><div class="card-sub">Adjust inputs to model different scenarios</div></div><button class="btn btn-outline btn-sm" onclick="resetEval()">Reset</button></div>
+
+          <div class="scen-row"><div class="scen-lbl">REE basket price ($/kg)</div><input type="range" class="scen-sl" min="20" max="100" value="52" id="e1" oninput="updEval()"><div class="scen-val" id="ev1">$52</div></div>
+          <div class="scen-row"><div class="scen-lbl">CAPEX overrun (%)</div><input type="range" class="scen-sl" min="0" max="50" value="0" id="e2" oninput="updEval()"><div class="scen-val" id="ev2">0%</div></div>
+          <div class="scen-row"><div class="scen-lbl">Delay to production (months)</div><input type="range" class="scen-sl" min="0" max="36" value="0" id="e3" oninput="updEval()"><div class="scen-val" id="ev3">0 mo</div></div>
+          <div class="scen-row"><div class="scen-lbl">Royalty rate (%)</div><input type="range" class="scen-sl" min="2" max="12" value="5" id="e4" oninput="updEval()"><div class="scen-val" id="ev4">5%</div></div>
+          <div class="scen-row"><div class="scen-lbl">UNMC equity stake (%)</div><input type="range" class="scen-sl" min="5" max="51" value="15" id="e5" oninput="updEval()"><div class="scen-val" id="ev5">15%</div></div>
+          <div class="scen-row"><div class="scen-lbl">Exchange rate (UGX/USD)</div><input type="range" class="scen-sl" min="3000" max="5500" value="3750" id="e6" oninput="updEval()"><div class="scen-val" id="ev6">3,750</div></div>
+
+          <div class="divider"></div>
+          <div class="card-hdr" style="margin-bottom:10px"><div class="card-title">Risk Assessment</div></div>
+          <div class="risk-grid">
+            <div class="rc rh"><div class="rc-lbl">Regulatory</div><div class="rc-val">8.2</div><div class="rc-bar" style="width:82%"></div></div>
+            <div class="rc rh"><div class="rc-lbl">Legal / Licences</div><div class="rc-val">7.9</div><div class="rc-bar" style="width:79%"></div></div>
+            <div class="rc rm"><div class="rc-lbl">ESG / Social</div><div class="rc-val">6.4</div><div class="rc-bar" style="width:64%"></div></div>
+            <div class="rc rm"><div class="rc-lbl">Market</div><div class="rc-val">5.8</div><div class="rc-bar" style="width:58%"></div></div>
+            <div class="rc rm"><div class="rc-lbl">Financial</div><div class="rc-val">5.1</div><div class="rc-bar" style="width:51%"></div></div>
+            <div class="rc rl"><div class="rc-lbl">Geological</div><div class="rc-val">2.4</div><div class="rc-bar" style="width:24%"></div></div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="result-box">
+            <div style="font-size:11px;font-weight:600;color:var(--blue2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Scenario NPV</div>
+            <div class="result-big" id="e-npv">$1,240M</div>
+            <div class="result-delta" id="e-delta" style="color:var(--t3)">Base case — adjust sliders to model</div>
+            <div class="divider"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+              <div><div style="font-size:10px;color:var(--t3);margin-bottom:3px;font-weight:500">IRR</div><div style="font-size:18px;font-weight:700;color:var(--green)" id="e-irr">22.4%</div></div>
+              <div><div style="font-size:10px;color:var(--t3);margin-bottom:3px;font-weight:500">Payback</div><div style="font-size:18px;font-weight:700;color:var(--t1)" id="e-pb">7.2 yrs</div></div>
+              <div><div style="font-size:10px;color:var(--t3);margin-bottom:3px;font-weight:500">Govt Rev</div><div style="font-size:18px;font-weight:700;color:var(--teal)" id="e-gov">$296M</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">UNMC Value Analysis</div></div>
+            <div class="ms"><div class="ms-l">UNMC share at current equity</div><div class="ms-v" id="e-u1" style="color:var(--blue2)">$186M</div></div>
+            <div class="ms"><div class="ms-l">UNMC share at 25% equity</div><div class="ms-v" id="e-u25" style="color:var(--green)">$310M</div></div>
+            <div class="ms"><div class="ms-l">Value of additional 10%</div><div class="ms-v" id="e-ud" style="color:var(--teal)">+$124M</div></div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">AI Recommendation</div></div>
+            <div style="background:var(--blue4);border-left:3px solid var(--blue2);border-radius:var(--r);padding:12px;font-size:12px;color:var(--t1);line-height:1.7">
+              <strong>Immediate action required:</strong> The expired EL/0042 is the most material risk in the national portfolio. Ministry must issue emergency renewal within 72 hours. UNMC should exercise option to increase equity to 25% — REE market fundamentals (NDPR +18% YTD) strongly support expedited development.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ MAP INTELLIGENCE ══ -->
+    <div class="pg" id="pg-map">
+      <div class="g2l">
+        <div class="card">
+          <div class="card-hdr"><div><div class="card-title">Uganda — National Licence Coverage</div><div class="card-sub">847 active licences across 4 regions</div></div></div>
+          <div class="map-container">
+            <svg viewBox="0 0 400 340" width="100%" height="100%" style="position:absolute;inset:0">
+              <defs>
+                <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#0000001A" stroke-width=".5"/>
+                </pattern>
+              </defs>
+              <rect width="400" height="340" fill="url(#grid)"/>
+              <path d="M165 28 L200 22 L238 36 L262 62 L275 98 L272 140 L260 182 L236 216 L206 234 L178 234 L148 216 L126 182 L114 140 L116 98 L130 64 L148 42Z" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+              <!-- PL dots - Northern -->
+              <circle cx="156" cy="70" r="7" fill="#2563eb30"/><circle cx="156" cy="70" r="4" fill="#2563eb60"/><circle cx="156" cy="70" r="2" fill="#2563eb"/>
+              <circle cx="192" cy="63" r="6" fill="#2563eb30"/><circle cx="192" cy="63" r="3.5" fill="#2563eb60"/><circle cx="192" cy="63" r="1.8" fill="#2563eb"/>
+              <circle cx="222" cy="98" r="5" fill="#2563eb30"/><circle cx="222" cy="98" r="3" fill="#2563eb60"/><circle cx="222" cy="98" r="1.5" fill="#2563eb"/>
+              <!-- EL dots - Eastern -->
+              <circle cx="194" cy="158" r="11" fill="#d97706" opacity=".2"/><circle cx="194" cy="158" r="7" fill="#d97706" opacity=".4"/><circle cx="194" cy="158" r="3" fill="#d97706"/>
+              <text x="208" y="162" fill="#92400e" font-size="9" font-family="Inter" font-weight="600">Makuutu REE</text>
+              <circle cx="155" cy="150" r="7" fill="#d97706" opacity=".2"/><circle cx="155" cy="150" r="4" fill="#d97706" opacity=".4"/><circle cx="155" cy="150" r="2" fill="#d97706"/>
+              <text x="165" y="149" fill="#92400e" font-size="8" font-family="Inter">Buhweju Au</text>
+              <circle cx="232" cy="165" r="6" fill="#d97706" opacity=".2"/><circle cx="232" cy="165" r="3.5" fill="#d97706" opacity=".4"/><circle cx="232" cy="165" r="1.8" fill="#d97706"/>
+              <text x="242" y="168" fill="#92400e" font-size="8" font-family="Inter">Kaliro Gr</text>
+              <!-- ML dots -->
+              <circle cx="248" cy="142" r="5" fill="#16a34a" opacity=".3"/><circle cx="248" cy="142" r="3" fill="#16a34a" opacity=".5"/><circle cx="248" cy="142" r="1.5" fill="#16a34a"/>
+              <text x="256" y="145" fill="#14532d" font-size="8" font-family="Inter">Tororo LS</text>
+              <circle cx="143" cy="128" r="4.5" fill="#16a34a" opacity=".3"/><circle cx="143" cy="128" r="2.5" fill="#16a34a" opacity=".5"/><circle cx="143" cy="128" r="1.3" fill="#16a34a"/>
+              <text x="150" y="131" fill="#14532d" font-size="8" font-family="Inter">Kilembe Cu</text>
+              <!-- Expired ring -->
+              <circle cx="194" cy="158" r="16" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4 3" opacity=".7"/>
+              <text x="195" y="144" fill="#dc2626" font-size="8" font-family="Inter" font-weight="700" text-anchor="middle">EXPIRED</text>
+              <!-- Region labels -->
+              <text x="194" y="52" fill="#64748b" font-size="10" font-family="Inter" font-weight="500" text-anchor="middle">NORTHERN</text>
+              <text x="152" y="104" fill="#64748b" font-size="10" font-family="Inter" font-weight="500" text-anchor="middle">WESTERN</text>
+              <text x="238" y="118" fill="#64748b" font-size="10" font-family="Inter" font-weight="500" text-anchor="middle">EASTERN</text>
+              <text x="194" y="208" fill="#64748b" font-size="10" font-family="Inter" font-weight="500" text-anchor="middle">CENTRAL</text>
+            </svg>
+            <div class="map-legend">
+              <div class="ml-item"><div class="ml-dot" style="background:#2563eb"></div>PL (289)</div>
+              <div class="ml-item"><div class="ml-dot" style="background:#d97706"></div>EL (187)</div>
+              <div class="ml-item"><div class="ml-dot" style="background:#16a34a"></div>ML (43)</div>
+              <div class="ml-item"><div class="ml-dot" style="background:#dc2626"></div>Alert</div>
+            </div>
+            <div class="map-overlay-text">Source: dgsmportal.minerals.go.ug · ArcGIS 10.6</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Coverage by Region</div></div>
+            <div class="bar-row"><div class="bar-lbl">Eastern Region</div><div class="bar-track"><div class="bar-fill" style="width:72%;background:#d97706"></div></div><div class="bar-val">312</div></div>
+            <div class="bar-row"><div class="bar-lbl">Western Region</div><div class="bar-track"><div class="bar-fill" style="width:55%;background:#2563eb"></div></div><div class="bar-val">238</div></div>
+            <div class="bar-row"><div class="bar-lbl">Northern Region</div><div class="bar-track"><div class="bar-fill" style="width:38%;background:#7c3aed"></div></div><div class="bar-val">164</div></div>
+            <div class="bar-row"><div class="bar-lbl">Central Region</div><div class="bar-track"><div class="bar-fill" style="width:30%;background:#0d9488"></div></div><div class="bar-val">133</div></div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Open Ground — Priority Blocks</div></div>
+            <div class="li-row">
+              <span class="badge b-green">HIGH</span>
+              <div class="li-body"><div class="li-title">OG-003 Arua — 32,000ha REE · Nb</div><div class="li-sub">Northern · No competing applications</div></div>
+              <button class="btn btn-blue btn-sm">Reserve</button>
+            </div>
+            <div class="li-row">
+              <span class="badge b-green">HIGH</span>
+              <div class="li-body"><div class="li-title">OG-001 Dokolo — 28,400ha Phosphate</div><div class="li-sub">Northern · Adjacent MML/0031</div></div>
+              <button class="btn btn-blue btn-sm">Reserve</button>
+            </div>
+            <div class="li-row">
+              <span class="badge b-amber">MED</span>
+              <div class="li-body"><div class="li-title">OG-004 Namayingo — 4,200ha Gold</div><div class="li-sub">Eastern · Adjacent EL/0042 (expired)</div></div>
+              <button class="btn btn-outline btn-sm">Assess</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ COMMODITIES ══ -->
+    <div class="pg" id="pg-commodities">
+      <div class="g4 mb">
+        <div class="comm-card"><div class="comm-name">Gold</div><div class="comm-price">$2,340</div><div class="comm-unit">per troy oz</div><div class="comm-change" style="color:var(--green)">↑ 1.2% today</div></div>
+        <div class="comm-card"><div class="comm-name">REE (NDPR)</div><div class="comm-price">$68</div><div class="comm-unit">per kg</div><div class="comm-change" style="color:var(--green)">↑ 18.0% YTD</div></div>
+        <div class="comm-card"><div class="comm-name">Copper</div><div class="comm-price">$9,840</div><div class="comm-unit">per metric tonne</div><div class="comm-change" style="color:var(--green)">↑ 0.8% today</div></div>
+        <div class="comm-card"><div class="comm-name">Graphite</div><div class="comm-price">$580</div><div class="comm-unit">per metric tonne</div><div class="comm-change" style="color:var(--red)">↓ 2.1% today</div></div>
+        <div class="comm-card"><div class="comm-name">Cobalt</div><div class="comm-price">$28,400</div><div class="comm-unit">per metric tonne</div><div class="comm-change" style="color:var(--red)">↓ 0.5% today</div></div>
+        <div class="comm-card"><div class="comm-name">Phosphate</div><div class="comm-price">$118</div><div class="comm-unit">per metric tonne</div><div class="comm-change" style="color:var(--green)">↑ 3.4% today</div></div>
+        <div class="comm-card"><div class="comm-name">Limestone</div><div class="comm-price">$22</div><div class="comm-unit">per metric tonne</div><div class="comm-change" style="color:var(--t3)">→ Stable</div></div>
+        <div class="comm-card"><div class="comm-name">Tungsten</div><div class="comm-price">$29,500</div><div class="comm-unit">per metric tonne</div><div class="comm-change" style="color:var(--green)">↑ 5.6% today</div></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-title">Portfolio Value by Commodity</div><div class="card-sub">NPV contribution ($M) — all active projects</div></div></div>
+        <div class="chart-wrap"><canvas id="commChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ══ COUNTRIES ══ -->
+    <div class="pg" id="pg-countries">
+      <div class="stat-grid mb">
+        <div class="stat"><div class="stat-label">Portfolio NPV</div><div class="stat-val">$4.7B</div><span class="stat-change sc-nt">Uganda</span></div>
+        <div class="stat"><div class="stat-label">In-Situ Value (est.)</div><div class="stat-val">$700B</div><span class="stat-change sc-nt">All minerals</span></div>
+        <div class="stat"><div class="stat-label">Active Licences</div><div class="stat-val">847</div><span class="stat-change sc-up">↑ 12 this month</span></div>
+        <div class="stat"><div class="stat-label">Jobs Potential</div><div class="stat-val">68,000</div><span class="stat-change sc-nt">Direct + indirect</span></div>
+      </div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Uganda — Regional Analysis</div></div>
+          <div class="li-row"><div class="li-icon" style="background:#dbeafe;font-size:16px">🟡</div><div class="li-body"><div class="li-title">Eastern Region</div><div class="li-sub">312 licences · Makuutu REE · Tororo LS · Kaliro Graphite</div></div><span class="badge b-blue">$2.16B NPV</span></div>
+          <div class="li-row"><div class="li-icon" style="background:#ccfbf1;font-size:16px">🔵</div><div class="li-body"><div class="li-title">Western Region</div><div class="li-sub">238 licences · Kilembe Copper · Buhweju Gold · Hima</div></div><span class="badge b-teal">$1.77B NPV</span></div>
+          <div class="li-row"><div class="li-icon" style="background:#ede9fe;font-size:16px">🟣</div><div class="li-body"><div class="li-title">Northern Region</div><div class="li-sub">164 licences · Karamoja gold · Kitgum Cu-Au · Arua REE</div></div><span class="badge b-purple">$0.52B NPV</span></div>
+          <div class="li-row"><div class="li-icon" style="background:#dcfce7;font-size:16px">🟢</div><div class="li-body"><div class="li-title">Central Region</div><div class="li-sub">133 licences · Industrial minerals · Aggregates</div></div><span class="badge b-green">$0.21B NPV</span></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Regulatory Framework</div></div>
+          <div class="ms"><div class="ms-l">Mining Act</div><div class="ms-v">2003 (amendment pending)</div></div>
+          <div class="ms"><div class="ms-l">Royalty rate (metals)</div><div class="ms-v">5% NSR</div></div>
+          <div class="ms"><div class="ms-l">Corporate tax rate</div><div class="ms-v">30%</div></div>
+          <div class="ms"><div class="ms-l">UNMC free carry</div><div class="ms-v">5%</div></div>
+          <div class="ms"><div class="ms-l">EIA requirement</div><div class="ms-v">Mandatory · NEMA</div></div>
+          <div class="ms"><div class="ms-l">Cadastre system</div><div class="ms-v">Trimble · ArcGIS 10.6</div></div>
+          <div class="ms"><div class="ms-l">Regulator</div><div class="ms-v">DGSM / MEMD</div></div>
+          <div class="ms"><div class="ms-l">Portal</div><div class="ms-v" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--blue2)">dgsmportal.minerals.go.ug</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ LICENCES ══ -->
+    <div class="pg" id="pg-licences">
+      <div class="info-banner">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--blue2)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div class="info-banner-txt">Connected to <strong>ArcGIS Server 10.6</strong> · miningcadastre.minerals.go.ug · 6 active layers · Last sync: 07:14 EAT today</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+        <select id="lt" style="background:var(--bg2);border:1px solid var(--b1);color:var(--t1);padding:7px 11px;border-radius:var(--r);font-size:12px;outline:none;font-family:'Inter',sans-serif" onchange="filterLic()"><option value="">All Types</option><option>PL</option><option>EL</option><option>RL</option><option>LML</option><option>MML</option><option>SML</option><option>AML</option></select>
+        <select id="lr" style="background:var(--bg2);border:1px solid var(--b1);color:var(--t1);padding:7px 11px;border-radius:var(--r);font-size:12px;outline:none;font-family:'Inter',sans-serif" onchange="filterLic()"><option value="">All Regions</option><option>Eastern</option><option>Western</option><option>Northern</option><option>Central</option></select>
+        <select id="ls" style="background:var(--bg2);border:1px solid var(--b1);color:var(--t1);padding:7px 11px;border-radius:var(--r);font-size:12px;outline:none;font-family:'Inter',sans-serif" onchange="filterLic()"><option value="">All Statuses</option><option>Active</option><option>Expiring</option><option>Expired</option></select>
+        <span style="font-size:12px;color:var(--t3);margin-left:auto" id="lic-count">847 licences</span>
+        <button class="btn btn-outline btn-sm" onclick="exportLic()">Export CSV</button>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Licence Code</th><th>Type</th><th>Holder</th><th>Mineral</th><th>Region</th><th>Area (ha)</th><th>Expiry Date</th><th>Days Left</th><th>Status</th></tr></thead>
+          <tbody id="lic-tbody"></tbody>
+        </table>
+        <div class="tbl-footer"><span id="lic-footer">Page 1 of 57</span><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)">.../Uganda_Licenses/MapServer/query?f=json</div></div>
+      </div>
+    </div>
+
+    <!-- ══ UGANDA MODULE ══ -->
+    <div class="pg" id="pg-uganda">
+      <div style="background:linear-gradient(135deg,#1d4ed8,#0d9488);border-radius:var(--r3);padding:24px;margin-bottom:16px;color:white;position:relative;overflow:hidden">
+        <div style="position:absolute;top:-30px;right:-30px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.08)"></div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;opacity:.7;margin-bottom:6px">National Strategic Overview</div>
+        <div style="font-size:22px;font-weight:700;margin-bottom:6px;letter-spacing:-.01em">Uganda Mining Portfolio</div>
+        <div style="font-size:12px;opacity:.8;line-height:1.7;max-width:540px">Uganda hosts world-class deposits of rare earth elements, gold, copper, limestone, graphite, and phosphate. The Makuutu REE Complex ranks among the top five ionic clay deposits globally. The national portfolio represents an estimated $700B in-situ mineral wealth.</div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:18px;padding-top:18px;border-top:1px solid rgba(255,255,255,.2)">
+          <div><div style="font-size:10px;opacity:.6;margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em">In-situ value</div><div style="font-size:18px;font-weight:700">$700B</div></div>
+          <div><div style="font-size:10px;opacity:.6;margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em">Bankable NPV</div><div style="font-size:18px;font-weight:700">$4.7B</div></div>
+          <div><div style="font-size:10px;opacity:.6;margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em">Active Licences</div><div style="font-size:18px;font-weight:700">847</div></div>
+          <div><div style="font-size:10px;opacity:.6;margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em">Govt Rev (10yr)</div><div style="font-size:18px;font-weight:700">$1.2B</div></div>
+          <div><div style="font-size:10px;opacity:.6;margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em">Jobs Potential</div><div style="font-size:18px;font-weight:700">68,000</div></div>
+        </div>
+      </div>
+      <div class="g3">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Priority Assets</div></div>
+          <div class="li-row"><span class="badge b-red">1</span><div class="li-body"><div class="li-title">Makuutu REE Complex</div><div class="li-sub">$1.24B NPV · EL EXPIRED · Act now</div></div></div>
+          <div class="li-row"><span class="badge b-amber">2</span><div class="li-body"><div class="li-title">Kilembe Copper</div><div class="li-sub">$890M NPV · FEED ready · Q3 2026</div></div></div>
+          <div class="li-row"><span class="badge b-blue">3</span><div class="li-body"><div class="li-title">Buhweju Gold</div><div class="li-sub">$680M NPV · Production · Phase 2</div></div></div>
+          <div class="li-row"><span class="badge b-teal">4</span><div class="li-body"><div class="li-title">Tororo Limestone</div><div class="li-sub">$540M NPV · IFC $120M offer</div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Ownership Analysis</div></div>
+          <div class="bar-row"><div class="bar-lbl">Foreign-controlled</div><div class="bar-track"><div class="bar-fill" style="width:63%;background:#dc2626"></div></div><div class="bar-val">63%</div></div>
+          <div class="bar-row"><div class="bar-lbl">Ugandan companies</div><div class="bar-track"><div class="bar-fill" style="width:37%;background:#16a34a"></div></div><div class="bar-val">37%</div></div>
+          <div class="divider"></div>
+          <div class="ms"><div class="ms-l">UNMC direct equity</div><div class="ms-v">14 licences</div></div>
+          <div class="ms"><div class="ms-l">Average UNMC stake</div><div class="ms-v">15%</div></div>
+          <div class="ms"><div class="ms-l">⚠ Rapid accumulation</div><div class="ms-v" style="color:var(--amber)">Sievert AB ↑ 6→17</div></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Strategic Recommendation</div></div>
+          <div style="background:var(--blue4);border-left:3px solid var(--blue2);border-radius:var(--r);padding:12px;font-size:12px;color:var(--t1);line-height:1.7">
+            <strong style="color:var(--blue2)">Three urgent actions:</strong><br>
+            1. Emergency EL/0042 renewal within 72 hours<br>
+            2. Increase UNMC equity to 25% in Makuutu<br>
+            3. Reserve Arua OG-003 REE block immediately
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ALERTS ══ -->
+    <div class="pg" id="pg-alerts">
+      <div class="stat-grid mb">
+        <div class="stat"><div class="stat-label">Expired (overdue)</div><div class="stat-val" style="color:var(--red)">4</div><span class="stat-change sc-dn">Immediate action</span></div>
+        <div class="stat"><div class="stat-label">Expiring ≤ 30 days</div><div class="stat-val" style="color:var(--red)">8</div><span class="stat-change sc-dn">Critical window</span></div>
+        <div class="stat"><div class="stat-label">Expiring 31–90 days</div><div class="stat-val" style="color:var(--amber)">15</div><span class="stat-change sc-nt">Renewal needed</span></div>
+        <div class="stat"><div class="stat-label">Active · No issues</div><div class="stat-val" style="color:var(--green)">612</div><span class="stat-change sc-up">72.3% of total</span></div>
+      </div>
+      <div class="card mb">
+        <div class="card-hdr"><div><div class="card-title">Critical — Expired & Expiring ≤ 30 Days</div><div class="card-sub">Requires immediate ministry or holder action</div></div></div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Licence</th><th>Type</th><th>Holder</th><th>Mineral</th><th>Region</th><th>Expiry</th><th>Days</th><th>Renewal Filed</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td class="nm">EL/0042</td><td><span class="badge b-gold">EL</span></td><td>Rwenzori Minerals</td><td>REE</td><td>Eastern</td><td>12 Apr 2026</td><td class="ex-c">−8 days</td><td><span class="badge b-red">NOT FILED</span></td><td><button class="btn btn-danger btn-sm">Alert Ministry</button></td></tr>
+              <tr><td class="nm">PL/0118</td><td><span class="badge b-blue">PL</span></td><td>Karamoja Gold</td><td>Gold</td><td>Northern</td><td>28 Apr 2026</td><td class="ex-c">8 days</td><td><span class="badge b-red">NOT FILED</span></td><td><button class="btn btn-outline btn-sm">Notify Holder</button></td></tr>
+              <tr><td class="nm">PL/0119</td><td><span class="badge b-blue">PL</span></td><td>Karamoja Gold</td><td>Gold</td><td>Northern</td><td>28 Apr 2026</td><td class="ex-c">8 days</td><td><span class="badge b-red">NOT FILED</span></td><td><button class="btn btn-outline btn-sm">Notify Holder</button></td></tr>
+              <tr><td class="nm">RL/0011</td><td><span class="badge b-gray">RL</span></td><td>Kilembe Investments</td><td>Copper</td><td>Western</td><td>30 Apr 2026</td><td class="ex-w">10 days</td><td><span class="badge b-amber">IN PROGRESS</span></td><td><button class="btn btn-outline btn-sm">Track</button></td></tr>
+              <tr><td class="nm">EL/0071</td><td><span class="badge b-gold">EL</span></td><td>Nile Resources</td><td>Gold</td><td>Eastern</td><td>5 May 2026</td><td class="ex-w">15 days</td><td><span class="badge b-green">FILED</span></td><td><button class="btn btn-outline btn-sm">Review</button></td></tr>
+              <tr><td class="nm">LML/0019</td><td><span class="badge b-green">LML</span></td><td>Hima Cement</td><td>Limestone</td><td>Western</td><td>12 May 2026</td><td class="ex-w">22 days</td><td><span class="badge b-green">FILED</span></td><td><button class="btn btn-outline btn-sm">Review</button></td></tr>
+              <tr><td class="nm">PL/0204</td><td><span class="badge b-blue">PL</span></td><td>Sievert Mining AB</td><td>Graphite</td><td>Eastern</td><td>18 May 2026</td><td class="ex-w">28 days</td><td><span class="badge b-red">NOT FILED</span></td><td><button class="btn btn-outline btn-sm">Notify</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ NEWS ══ -->
+    <div class="pg" id="pg-news">
+      <div class="g2">
+        <div>
+          <div class="news-card"><div class="news-tag" style="background:var(--red2);color:var(--red)">CRITICAL ALERT</div><div class="news-title">Makuutu REE Exploration Licence Expires — $1.24B NPV at Risk Without Renewal</div><div class="news-meta">DGSM Cadastre · Today · Regulatory</div></div>
+          <div class="news-card"><div class="news-tag" style="background:var(--grn2);color:var(--green)">MARKET</div><div class="news-title">NDPR Prices Rise 18% Year-to-Date on Global EV Battery Demand Surge</div><div class="news-meta">Reuters Metals · Today · Commodity Markets</div></div>
+          <div class="news-card"><div class="news-tag" style="background:var(--blue3);color:var(--blue2)">FINANCE</div><div class="news-title">IFC Offers $120M Facility for Tororo Limestone Expansion — 14-Day Window</div><div class="news-meta">IFC Press · 2 days ago · Development Finance</div></div>
+          <div class="news-card"><div class="news-tag" style="background:var(--amb2);color:var(--amber)">CADASTRE</div><div class="news-title">NorthGold Ltd Files Application for 14,200ha Copper Target in Kitgum</div><div class="news-meta">Uganda Gazette · 3 days ago · Applications</div></div>
+          <div class="news-card"><div class="news-tag" style="background:var(--pur2);color:var(--purple)">OWNERSHIP</div><div class="news-title">Sievert Mining AB Acquires PL/0204 — Uganda Portfolio Now 17 Licences</div><div class="news-meta">DGSM · 4 days ago · Ownership Change</div></div>
+        </div>
+        <div>
+          <div class="news-card"><div class="news-tag" style="background:var(--teal2);color:var(--teal)">INFRASTRUCTURE</div><div class="news-title">Hoima–Kigumba 132kV Line Commissioned — Power Access for Kilembe Secured</div><div class="news-meta">UETCL · 5 days ago · Infrastructure</div></div>
+          <div class="news-card"><div class="news-tag" style="background:var(--grn2);color:var(--green)">EXPLORATION</div><div class="news-title">New Copper Anomaly Identified in Kitgum District — Geophysical Survey Results</div><div class="news-meta">DGSM Geology · 6 days ago · Exploration</div></div>
+          <div class="news-card"><div class="news-tag" style="background:var(--blue3);color:var(--blue2)">INVESTOR</div><div class="news-title">Sovereign Wealth Fund of Norway Requests Uganda Portfolio Briefing</div><div class="news-meta">UNMC · 1 week ago · Investor Relations</div></div>
+          <div class="news-card"><div class="news-tag" style="background:var(--amb2);color:var(--amber)">POLICY</div><div class="news-title">Mining Act Amendment Bill Tabled in Parliament — Royalty Review Proposed</div><div class="news-meta">Parliament of Uganda · 1 week ago · Policy</div></div>
+          <div class="news-card"><div class="news-tag" style="background:var(--grn2);color:var(--green)">MILESTONE</div><div class="news-title">Kilembe Copper Feasibility Study Approved — Pre-FEED Commences Q3 2026</div><div class="news-meta">UNMC · 10 days ago · Milestone</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SCENARIOS ══ -->
+    <div class="pg" id="pg-scenarios">
+      <div class="g2">
+        <div class="card">
+          <div class="card-hdr"><div><div class="card-title">Portfolio Scenario Engine</div><div class="card-sub">Adjust commodity prices and assumptions to model portfolio NPV impact</div></div><button class="btn btn-outline btn-sm" onclick="resetScen()">Reset</button></div>
+          <div class="scen-row"><div class="scen-lbl">Gold price ($/oz)</div><input type="range" class="scen-sl" min="1500" max="3500" value="2340" id="sc1" oninput="updScen()"><div class="scen-val" id="sv1">$2,340</div></div>
+          <div class="scen-row"><div class="scen-lbl">REE basket price ($/kg)</div><input type="range" class="scen-sl" min="20" max="100" value="52" id="sc2" oninput="updScen()"><div class="scen-val" id="sv2">$52</div></div>
+          <div class="scen-row"><div class="scen-lbl">Copper price ($/t)</div><input type="range" class="scen-sl" min="6000" max="14000" value="9840" id="sc3" oninput="updScen()"><div class="scen-val" id="sv3">$9,840</div></div>
+          <div class="scen-row"><div class="scen-lbl">UGX / USD rate</div><input type="range" class="scen-sl" min="3000" max="5500" value="3750" id="sc4" oninput="updScen()"><div class="scen-val" id="sv4">3,750</div></div>
+          <div class="scen-row"><div class="scen-lbl">Avg royalty rate (%)</div><input type="range" class="scen-sl" min="2" max="12" value="5" id="sc5" oninput="updScen()"><div class="scen-val" id="sv5">5%</div></div>
+          <div class="scen-row"><div class="scen-lbl">Portfolio CAPEX overrun (%)</div><input type="range" class="scen-sl" min="0" max="40" value="0" id="sc6" oninput="updScen()"><div class="scen-val" id="sv6">0%</div></div>
+          <div class="divider"></div>
+          <div class="card-hdr" style="margin:0"><div class="card-title">Asset-Level Impact</div></div>
+          <div style="margin-top:12px">
+            <div class="ms"><div class="ms-l">Makuutu REE Complex</div><div class="ms-v" id="sc-ree" style="color:var(--blue2)">$1,240M</div></div>
+            <div class="ms"><div class="ms-l">Kilembe Copper</div><div class="ms-v" id="sc-cu" style="color:var(--amber)">$890M</div></div>
+            <div class="ms"><div class="ms-l">Buhweju Gold</div><div class="ms-v" id="sc-au" style="color:var(--gold)">$680M</div></div>
+            <div class="ms"><div class="ms-l">All other assets (18)</div><div class="ms-v" id="sc-oth">$1,890M</div></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="result-box">
+            <div style="font-size:11px;font-weight:600;color:var(--blue2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Total Portfolio NPV</div>
+            <div class="result-big" id="sc-npv">$4,700M</div>
+            <div class="result-delta" id="sc-delta" style="color:var(--t3)">Base case</div>
+            <div class="divider"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+              <div><div style="font-size:11px;color:var(--t3);margin-bottom:4px;font-weight:500">Govt Revenue (10yr)</div><div style="font-size:22px;font-weight:700;color:var(--teal)" id="sc-gov">$1,200M</div></div>
+              <div><div style="font-size:11px;color:var(--t3);margin-bottom:4px;font-weight:500">UNMC Share (15%)</div><div style="font-size:22px;font-weight:700;color:var(--blue2)" id="sc-unmc">$705M</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Capital Needs by Stage</div></div>
+            <div class="chart-wrap"><canvas id="scenChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ REPORTS ══ -->
+    <div class="pg" id="pg-reports">
+      <div class="g3">
+        <div class="rep"><div class="rep-icon">📋</div><div class="rep-title">Board Pack — Q2 2026</div><div class="rep-desc">Comprehensive portfolio update. KPIs, decision items, risk register, and strategic priorities for the board meeting.</div><div class="rep-footer"><span style="font-size:11px;color:var(--t3)">Updated today</span><button class="btn btn-outline btn-sm">Download PDF</button></div></div>
+        <div class="rep"><div class="rep-icon">💼</div><div class="rep-title">Investment Memo — Makuutu REE</div><div class="rep-desc">Executive investment case. NPV, IRR, resource estimate, ownership structure, risk factors, and strategic rationale.</div><div class="rep-footer"><span style="font-size:11px;color:var(--t3)">3 days ago</span><button class="btn btn-outline btn-sm">Download PDF</button></div></div>
+        <div class="rep"><div class="rep-icon">📊</div><div class="rep-title">Weekly Intelligence Brief</div><div class="rep-desc">7-day summary of commodity movements, regulatory changes, new opportunities, and risk escalations across the portfolio.</div><div class="rep-footer"><span style="font-size:11px;color:var(--t3)">Updated today</span><button class="btn btn-outline btn-sm">Download PDF</button></div></div>
+        <div class="rep"><div class="rep-icon">🏛</div><div class="rep-title">Ministerial Dashboard</div><div class="rep-desc">One-page executive brief for Ministry of Energy and Mineral Development. Policy actions and revenue projections.</div><div class="rep-footer"><span style="font-size:11px;color:var(--t3)">1 day ago</span><button class="btn btn-outline btn-sm">Download PDF</button></div></div>
+        <div class="rep"><div class="rep-icon">🌍</div><div class="rep-title">Investor Brief — SWF Norway</div><div class="rep-desc">Tailored for sovereign fund request. Portfolio overview, ESG ratings, strategic opportunities, co-investment options.</div><div class="rep-footer"><span style="font-size:11px;color:var(--t3)">Draft ready</span><button class="btn btn-blue btn-sm">Review Draft</button></div></div>
+        <div class="rep"><div class="rep-icon">⚡</div><div class="rep-title">Critical Minerals Strategy</div><div class="rep-desc">Uganda's REE and graphite positioning in global battery supply chains. Policy recommendations for 2027–2035.</div><div class="rep-footer"><span style="font-size:11px;color:var(--t3)">2 weeks ago</span><button class="btn btn-outline btn-sm">Download PDF</button></div></div>
+      </div>
+    </div>
+
+  </div><!-- /ct -->
+</div><!-- /mn -->
+</div><!-- /app -->
+
+<script>
+/* ═══ NAVIGATION ═══ */
+const TITLES={dashboard:'Dashboard',projects:'Projects',evaluator:'Evaluator',map:'Map Intelligence',commodities:'Commodities',countries:'Countries',licences:'Licences',uganda:'Uganda Module',alerts:'Alerts',news:'News',scenarios:'Scenarios',reports:'Reports'};
+const SUBS={dashboard:'Uganda National Mining Intelligence Platform',projects:'Active project portfolio — 7 priority assets',evaluator:'Financial modelling & risk assessment',map:'Geospatial licence coverage — Uganda',commodities:'Live commodity prices & portfolio exposure',countries:'Country-level regulatory & strategic overview',licences:'National Mining Cadastre — 847 active licences',uganda:'National portfolio strategy & priorities',alerts:'Licence expiry monitoring — 23 flagged',news:'Intelligence feed & market updates',scenarios:'Portfolio scenario engine — adjust assumptions',reports:'Executive reports & downloadable briefings'};
+
+function nav(id){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  const pg=document.getElementById('pg-'+id);
+  if(pg){pg.classList.remove('on');void pg.offsetWidth;pg.classList.add('on')}
+  document.getElementById('pg-title').textContent=TITLES[id]||id;
+  document.getElementById('pg-sub').textContent=SUBS[id]||'';
+  document.querySelectorAll(`.ni[onclick="nav('${id}')"]`).forEach(e=>e.classList.add('on'));
+  document.getElementById('ct-area').scrollTop=0;
+  if(id==='projects')renderProj();
+  if(id==='licences')renderLic();
+  if(id==='scenarios'){initScenChart();updScen();}
+}
+
+/* ═══ PROJECT DATA ═══ */
+const PROJECTS=[
+  {name:'Makuutu REE Complex',commodity:'REE',stage:'Development',region:'Eastern',npv:1240,irr:22.4,capex:320,capex_stage:'Pre-FEED',risk:'High',status:'Licence Expired'},
+  {name:'Kilembe Copper',commodity:'Copper',stage:'Development',region:'Western',npv:890,irr:18.3,capex:410,capex_stage:'FEED',risk:'Medium',status:'Feasibility Done'},
+  {name:'Buhweju Gold',commodity:'Gold',stage:'Production',region:'Western',npv:680,irr:31.2,capex:85,capex_stage:'Phase 2',risk:'Medium',status:'CAPEX Pending'},
+  {name:'Tororo Limestone',commodity:'Limestone',stage:'Production',region:'Eastern',npv:540,irr:28.7,capex:120,capex_stage:'Expansion',risk:'Low',status:'DFI Offer'},
+  {name:'Kaliro Graphite',commodity:'Graphite',stage:'Exploration',region:'Eastern',npv:380,irr:14.1,capex:95,capex_stage:'Exploration',risk:'High',status:'ESG Escalated'},
+  {name:'Kitgum Copper-Gold',commodity:'Copper',stage:'Exploration',region:'Northern',npv:210,irr:0,capex:35,capex_stage:'Exploration',risk:'Medium',status:'New Anomaly'},
+  {name:'Butebo Phosphate',commodity:'Phosphate',stage:'Exploration',region:'Eastern',npv:160,irr:12.8,capex:65,capex_stage:'Exploration',risk:'Low',status:'On Track'},
+];
+let filtP=[...PROJECTS];
+const RISK_B={High:'b-red',Medium:'b-amber',Low:'b-green'};
+const STAGE_B={Production:'b-green',Development:'b-blue',Exploration:'b-gold'};
+
+function renderProj(){
+  document.getElementById('proj-tbody').innerHTML=filtP.map(p=>`
+    <tr>
+      <td class="nm">${p.name}</td>
+      <td><span class="badge ${STAGE_B[p.stage]||'b-gray'}">${p.commodity}</span></td>
+      <td><span class="badge ${STAGE_B[p.stage]||'b-gray'}">${p.stage}</span></td>
+      <td>${p.region}</td>
+      <td style="font-weight:600;color:#0f172a">$${p.npv.toLocaleString()}</td>
+      <td style="color:${p.irr>=20?'#16a34a':p.irr>=12?'#d97706':'#94a3b8'}">${p.irr?p.irr+'%':'TBD'}</td>
+      <td>$${p.capex}</td>
+      <td><span class="badge b-gray">${p.capex_stage}</span></td>
+      <td><span class="badge ${RISK_B[p.risk]}">${p.risk}</span></td>
+      <td><span class="badge ${p.status.includes('Expired')||p.status.includes('Escalated')?'b-red':p.status.includes('Done')||p.status.includes('Track')?'b-green':'b-amber'}">${p.status}</span></td>
+    </tr>`).join('');
+  const n=filtP.length;
+  document.getElementById('proj-count').textContent=n+' project'+(n!==1?'s':'');
+  document.getElementById('proj-footer').textContent=`Showing ${n} of ${PROJECTS.length} projects`;
+}
+function filterProj(){
+  const c=document.getElementById('pf-c').value;
+  const r=document.getElementById('pf-r').value;
+  const s=document.getElementById('pf-s').value;
+  filtP=PROJECTS.filter(p=>(!c||p.commodity===c)&&(!r||p.region===r)&&(!s||p.stage===s));
+  renderProj();
+}
+
+/* ═══ LICENCE DATA ═══ */
+const TYPES=['PL','EL','RL','LML','MML','SML','AML'];
+const REGIONS=['Eastern','Western','Northern','Central'];
+const DISTRICTS={Eastern:['Busia','Jinja','Kaliro','Namayingo','Tororo','Iganga'],Western:['Kasese','Mbarara','Kabarole','Hoima'],Northern:['Gulu','Arua','Kitgum','Moroto','Lira'],Central:['Wakiso','Mukono','Kayunga']};
+const MINERALS=['Gold','REE','Copper','Limestone','Graphite','Cobalt','Phosphate','Iron Ore','Tungsten'];
+const COMPANIES=['East Africa Gold Ltd','Tororo Cement Ltd','Rwenzori Minerals Ltd','Nile Resources PLC','Kilembe Investments','Sievert Mining AB','Uganda Dev. Corp','Atlas Mining Group','Hima Cement Ltd','Karamoja Gold Corp'];
+const h=(n,m)=>((n*1664525+1013904223)&0x7fffffff)%m;
+const LICENCES=(()=>{
+  const rows=[];
+  for(let i=0;i<847;i++){
+    const type=TYPES[h(i*7,TYPES.length)];
+    const region=REGIONS[h(i*11,4)];
+    const dl=-90+Math.floor(h(i*13,900));
+    const today=new Date(2026,3,20);
+    const exp=new Date(today);exp.setDate(exp.getDate()+dl);
+    rows.push({code:`${type}/${String(i+1).padStart(4,'0')}`,type,holder:COMPANIES[h(i*17,COMPANIES.length)],mineral:MINERALS[h(i*19,MINERALS.length)],region,district:DISTRICTS[region][h(i*23,DISTRICTS[region].length)],area:500+h(i*29,29500),expiry:exp.toISOString().slice(0,10),daysLeft:dl,status:dl<0?'Expired':dl<=90?'Expiring':'Active'});
+  }
+  rows[0]={code:'EL/0042',type:'EL',holder:'Rwenzori Minerals Ltd',mineral:'REE',region:'Eastern',district:'Busoga',area:43200,expiry:'2026-04-12',daysLeft:-8,status:'Expired'};
+  rows[2]={code:'PL/0118',type:'PL',holder:'Karamoja Gold Corp',mineral:'Gold',region:'Northern',district:'Moroto',area:5200,expiry:'2026-04-28',daysLeft:8,status:'Expiring'};
+  return rows;
+})();
+let filtL=[...LICENCES];const PS=15;let cp=1;
+
+function renderLic(){
+  const sl=filtL.slice((cp-1)*PS,cp*PS);
+  const TB={PL:'b-blue',EL:'b-gold',RL:'b-gray',LML:'b-green',MML:'b-green',SML:'b-green',AML:'b-gray'};
+  document.getElementById('lic-tbody').innerHTML=sl.map(l=>{
+    const dc=l.daysLeft<0?'ex-c':l.daysLeft<=30?'ex-c':l.daysLeft<=90?'ex-w':'ex-o';
+    const dt=l.daysLeft<0?`${Math.abs(l.daysLeft)}d overdue`:l.daysLeft===0?'Today':`${l.daysLeft}d`;
+    const sb=l.status==='Active'?'b-green':l.status==='Expiring'?'b-amber':'b-red';
+    return`<tr><td class="nm" style="font-family:'IBM Plex Mono',monospace;font-size:11px">${l.code}</td><td><span class="badge ${TB[l.type]||'b-gray'}">${l.type}</span></td><td>${l.holder}</td><td>${l.mineral}</td><td>${l.region}</td><td>${l.area.toLocaleString()}</td><td>${l.expiry}</td><td class="${dc}">${dt}</td><td><span class="badge ${sb}">${l.status}</span></td></tr>`;
+  }).join('');
+  document.getElementById('lic-count').textContent=filtL.length+' licences';
+  document.getElementById('lic-footer').textContent=`Page ${cp} of ${Math.ceil(filtL.length/PS)}`;
+}
+function filterLic(){
+  const t=document.getElementById('lt').value;
+  const r=document.getElementById('lr').value;
+  const s=document.getElementById('ls').value;
+  filtL=LICENCES.filter(l=>(!t||l.type===t)&&(!r||l.region===r)&&(!s||l.status===s));
+  cp=1;renderLic();
+}
+function exportLic(){
+  const hdr='Code,Type,Holder,Mineral,Region,Area_ha,ExpiryDate,DaysLeft,Status\n';
+  const rows=filtL.map(l=>`${l.code},${l.type},"${l.holder}",${l.mineral},${l.region},${l.area},${l.expiry},${l.daysLeft},${l.status}`).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([hdr+rows],{type:'text/csv'}));a.download='uganda_licences.csv';a.click();
+}
+function onSearch(v){
+  if(document.getElementById('pg-licences').classList.contains('on')){
+    if(!v){filtL=[...LICENCES];renderLic();return}
+    const lv=v.toLowerCase();
+    filtL=LICENCES.filter(l=>l.code.toLowerCase().includes(lv)||l.holder.toLowerCase().includes(lv)||l.mineral.toLowerCase().includes(lv)||l.region.toLowerCase().includes(lv));
+    renderLic();
+  }
+}
+
+/* ═══ EVALUATOR ═══ */
+function updEval(){
+  const p=+document.getElementById('e1').value,c=+document.getElementById('e2').value,
+        d=+document.getElementById('e3').value,r=+document.getElementById('e4').value,
+        e=+document.getElementById('e5').value,f=+document.getElementById('e6').value;
+  document.getElementById('ev1').textContent='$'+p;
+  document.getElementById('ev2').textContent=c+'%';
+  document.getElementById('ev3').textContent=d+' mo';
+  document.getElementById('ev4').textContent=r+'%';
+  document.getElementById('ev5').textContent=e+'%';
+  document.getElementById('ev6').textContent=f.toLocaleString();
+  const base=1240,npv=Math.round(base+(p-52)*9.2-(c*4.2)-(d*5.1)-((r-5)*22)+((f-3750)*0.05));
+  const delta=npv-base,irr=Math.max(5,Math.round((22.4+delta/120)*10)/10);
+  const pb=Math.max(2,Math.round((7.2+d/12+c*0.04)*10)/10),gov=Math.round(npv*0.239);
+  document.getElementById('e-npv').textContent='$'+npv.toLocaleString()+'M';
+  document.getElementById('e-npv').style.color=npv>=base?'var(--blue)':'var(--red)';
+  document.getElementById('e-delta').textContent=(delta>=0?'↑ +':'↓ ')+Math.abs(delta).toLocaleString()+'M vs base case';
+  document.getElementById('e-delta').style.color=delta>=0?'var(--green)':'var(--red)';
+  document.getElementById('e-irr').textContent=irr.toFixed(1)+'%';
+  document.getElementById('e-irr').style.color=irr>=15?'var(--green)':irr>=10?'var(--amber)':'var(--red)';
+  document.getElementById('e-pb').textContent=pb.toFixed(1)+' yrs';
+  document.getElementById('e-gov').textContent='$'+gov+'M';
+  document.getElementById('e-u1').textContent='$'+Math.round(npv*e/100).toLocaleString()+'M';
+  document.getElementById('e-u25').textContent='$'+Math.round(npv*.25).toLocaleString()+'M';
+  document.getElementById('e-ud').textContent='+$'+Math.round(npv*.25-npv*e/100).toLocaleString()+'M';
+}
+function resetEval(){
+  [['e1',52],['e2',0],['e3',0],['e4',5],['e5',15],['e6',3750]].forEach(([id,v])=>document.getElementById(id).value=v);
+  updEval();
+}
+
+/* ═══ SCENARIOS ═══ */
+function updScen(){
+  const g=+document.getElementById('sc1').value,ree=+document.getElementById('sc2').value,
+        cu=+document.getElementById('sc3').value,fx=+document.getElementById('sc4').value,
+        roy=+document.getElementById('sc5').value,cap=+document.getElementById('sc6').value;
+  document.getElementById('sv1').textContent='$'+g.toLocaleString();
+  document.getElementById('sv2').textContent='$'+ree;
+  document.getElementById('sv3').textContent='$'+cu.toLocaleString();
+  document.getElementById('sv4').textContent=fx.toLocaleString();
+  document.getElementById('sv5').textContent=roy+'%';
+  document.getElementById('sv6').textContent=cap+'%';
+  const rn=Math.max(0,Math.round(1240+(ree-52)*9.2-((roy-5)*22)));
+  const cn=Math.max(0,Math.round(890+(cu-9840)*0.04-cap*5));
+  const an=Math.max(0,Math.round(680+(g-2340)*0.12-((roy-5)*15)));
+  const oth=Math.max(0,Math.round(1890-cap*8));
+  const tot=rn+cn+an+oth,base=4700,delta=tot-base;
+  document.getElementById('sc-npv').textContent='$'+tot.toLocaleString()+'M';
+  document.getElementById('sc-npv').style.color=tot>=base?'var(--blue)':'var(--red)';
+  document.getElementById('sc-delta').textContent=(delta>=0?'↑ +':'↓ ')+Math.abs(delta).toLocaleString()+'M vs base case';
+  document.getElementById('sc-delta').style.color=delta>=0?'var(--green)':'var(--red)';
+  document.getElementById('sc-gov').textContent='$'+Math.round(tot*.255).toLocaleString()+'M';
+  document.getElementById('sc-unmc').textContent='$'+Math.round(tot*.15).toLocaleString()+'M';
+  document.getElementById('sc-ree').textContent='$'+rn.toLocaleString()+'M';
+  document.getElementById('sc-cu').textContent='$'+cn.toLocaleString()+'M';
+  document.getElementById('sc-au').textContent='$'+an.toLocaleString()+'M';
+  document.getElementById('sc-oth').textContent='$'+oth.toLocaleString()+'M';
+}
+function resetScen(){
+  [['sc1',2340],['sc2',52],['sc3',9840],['sc4',3750],['sc5',5],['sc6',0]].forEach(([id,v])=>document.getElementById(id).value=v);
+  updScen();
+}
+
+/* ═══ CHARTS ═══ */
+Chart.defaults.font.family="'Inter',sans-serif";
+Chart.defaults.font.size=11;
+Chart.defaults.color='#94a3b8';
+
+function mkChart(id,type,labels,datasets,opts={}){
+  const ctx=document.getElementById(id);
+  if(!ctx)return;
+  if(ctx._chart)ctx._chart.destroy();
+  ctx._chart=new Chart(ctx,{type,data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},...opts}});
+  return ctx._chart;
+}
+
+window.addEventListener('load',()=>{
+  // Capital needs by stage
+  mkChart('capitalChart','bar',
+    ['Exploration','Resource\nDefinition','Pre-\nFeasibility','Feasibility','Construction','Production'],
+    [{data:[0.5,0.8,1.2,2.1,7.8,1.4],backgroundColor:['#dbeafe','#bfdbfe','#93c5fd','#60a5fa','#1d4ed8','#0d9488'],borderRadius:4,borderSkipped:false}],
+    {indexAxis:'y',scales:{x:{grid:{color:'#f1f5f9'},ticks:{callback:v=>'$'+v+'B'}},y:{grid:{display:false}}}}
+  );
+  // Revenue by commodity
+  mkChart('revenueChart','doughnut',
+    ['REE','Gold','Copper','Limestone','Other'],
+    [{data:[296,188,145,98,73],backgroundColor:['#7c3aed','#d97706','#d97706','#64748b','#0d9488'],hoverOffset:4}],
+    {plugins:{legend:{display:true,position:'right',labels:{boxWidth:10,padding:8}}}}
+  );
+  // Commodity portfolio chart
+  mkChart('commChart','bar',
+    ['Makuutu REE','Kilembe Cu','Buhweju Au','Tororo LS','Kaliro Gr','Other'],
+    [{data:[1240,890,680,540,380,970],backgroundColor:['#7c3aed','#d97706','#eab308','#64748b','#0d9488','#94a3b8'],borderRadius:6}],
+    {scales:{x:{grid:{display:false}},y:{grid:{color:'#f1f5f9'},ticks:{callback:v=>'$'+v+'M'}}}}
+  );
+  renderProj();renderLic();updEval();updScen();
+});
+
+function initScenChart(){
+  if(document.getElementById('scenChart')._chart)return;
+  mkChart('scenChart','bar',
+    ['Exploration','Pre-Feasibility','Feasibility','Construction','Production'],
+    [{data:[0.4,1.1,1.9,6.8,1.2],backgroundColor:'#1d4ed8',borderRadius:4}],
+    {scales:{x:{grid:{display:false}},y:{grid:{color:'#f1f5f9'},ticks:{callback:v=>'$'+v+'B'}}}}
+  );
+}
+</script>
+</body>
+</html>
